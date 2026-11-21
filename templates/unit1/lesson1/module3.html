@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Synapse - Lesson 1.1.3</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="icon" href="../../static/fav.png" type="image/x-icon">
+<style>
+body {margin:0;font-family:'Segoe UI',sans-serif;background-color:#0d1b2a;color:#e0e1dd;}
+main {display:flex;min-height:85vh;}
+header {
+  background-color: #1b263b;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header h1 {
+  margin: 0;
+  color: #e0e1dd;
+}
+
+nav a {
+  color: #778da9;
+  margin-left: 1rem;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+nav a:hover, nav a.active {
+  color: #e0e1dd;
+}
+footer {background-color:#1b263b;text-align:center;padding:1rem;}
+footer p {margin-top: 1em; margin-bottom: 1em; line-height: normal;}
+.sidebar {background-color:#1c283d;width:250px;padding:1.5rem;border-right:2px solid #415a77;}
+.sidebar h3 {border-bottom:2px solid #415a77;padding-bottom:0.5rem;margin-bottom:1rem;}
+.sidebar a {display:block;color:#cdd2d9;text-decoration:none;margin:0.5rem 0;transition:color 0.3s;}
+.sidebar a:hover {color:#778da9;}
+.lesson-content {flex:1;padding:2rem 3rem;}
+.lesson-content h2 {border-bottom:2px solid #415a77;padding-bottom:0.5rem;margin-bottom:1rem;}
+.highlight {background-color:#415a77;padding:1rem;border-radius:8px;margin:1.5rem 0;}
+.quote {border-left:4px solid #778da9;padding-left:1rem;margin:1.5rem 0;font-style:italic;color:#cdd2d9;}
+.callout {background-color:#556b8a;padding:1rem;border-radius:8px;margin:1.5rem 0;color:#e0e1dd;font-weight:bold;}
+.lesson-nav {display:flex;justify-content:space-between;margin-top:2rem;}
+.lesson-nav button {background-color:#415a77;color:#e0e1dd;border:none;padding:0.8rem 1.6rem;border-radius:8px;font-weight:bold;transition:background-color 0.3s;}
+.lesson-nav button:hover {background-color:#778da9;color:#0d1b2a;}
+.lessons {display:none;margin-left:1rem;}
+.module-btn {background:none;border:none;color:#e0e1dd;font-weight:bold;cursor:pointer;padding:0.3rem 0;margin-bottom:0.3rem;text-align:left;width:100%;transition:color 0.3s;}
+.module-btn:hover {color:#778da9;}
+.active-module .lessons {display:block;}
+img.lesson-img {width:50%;border-radius:8px;margin:1rem 0;}
+ul {margin:0.5rem 0 1rem 1.2rem;}
+</style>
+<script>
+function toggleModule(el){el.parentElement.classList.toggle('active-module');}
+</script>
+</head>
+<body>
+    <header>
+        <img onclick="window.location.href='/learn'" style="cursor: pointer; width: 16rem" src="../../static/synapse.png">
+        <nav>
+            <a href="/learn">Learn</a>
+            <a href="/projects">Projects</a>
+            <a href="/profile">Profile</a>
+        </nav>
+    </header>
+
+<main>
+<aside class="sidebar">
+  <h3>Lesson Modules</h3>
+  <div class="module active-module">
+    <button class="module-btn" onclick="toggleModule(this)">What is AI?</button>
+    <div class="lessons">
+      <a href="./module-1">1. Introduction</a>
+      <a href="./module-2" class="active">2. History of AI</a>
+      <a href="./module-3">3. Applications</a>
+    </div>
+  </div>
+  <div class="module">
+    <button class="module-btn" onclick="toggleModule(this)">Machine Learning Basics</button>
+    <div class="lessons">
+      <a href="../lesson-2/module-1">1. What is ML?</a>
+      <a href="../lesson-2/module-2">2. Supervised vs Unsupervised</a>
+      <a href="../lesson-2/module-3">3. Algorithms</a>
+    </div>
+  </div>
+  <div class="module">
+    <button class="module-btn" onclick="toggleModule(this)">Deep Learning vs ML</button>
+    <div class="lessons">
+      <a href="../lesson-3/module-1">1. Intro to Deep Learning</a>
+      <a href="../lesson-3/module-2">2. Neural Networks</a>
+      <a href="../lesson-3/module-3">3. DL vs ML</a>
+    </div>
+  </div>
+  </div>
+  <div class="module">
+    <button class="module-btn" onclick="toggleModule(this)">Final Quiz</button>
+    <div class="lessons">
+      <a href="../quiz">Take Quiz</a>
+    </div>
+  </div>
+</aside>
+
+<section class="lesson-content">
+<h2>Lesson 1.3: Real-World Applications of AI</h2>
+
+<p>
+AI is everywhere today, transforming industries in ways we often take for granted. Some sectors use AI to analyze massive datasets, while others rely on it for automation and intelligent decision-making.
+</p>
+
+<div class="highlight">
+<strong>Healthcare:</strong> AI algorithms can detect anomalies in medical scans faster than human radiologists, helping diagnose diseases earlier and more accurately.
+</div>
+
+<img src="https://cdn.ncbi.nlm.nih.gov/pmc/blobs/3e55/8285156/0e08971f64fd/futurehealth-8-2-e188fig2.jpg" alt="AI in Healthcare" class="lesson-img" width="50">
+
+<p>
+In retail, AI predicts which products will sell and optimizes stock levels. Recommendation engines on e-commerce sites suggest products based on your browsing habits, increasing both convenience and sales.
+</p>
+
+<div class="callout">
+Fun Fact: Netflix uses AI not just for recommendations, but also to decide which thumbnails to show you for each title!
+</div>
+
+<p>
+Transportation and logistics also benefit from AI. Self-driving vehicles combine sensors, cameras, and real-time traffic data to navigate safely. AI also optimizes delivery routes, reducing fuel consumption and delivery times.
+</p>
+
+<div class="quote">
+"AI is the new electricity." – Andrew Ng
+</div>
+
+<p>
+Finally, AI is moving into creative fields. It can compose music, generate artwork, and even write short stories. This illustrates that AI is not just about efficiency — it’s also about augmenting human creativity.
+</p>
+
+<div class="lesson-nav">
+  <button onclick="window.location.href='./module-2'">&larr; Previous</button>
+  <button onclick="window.location.href='../lesson-2/module-1'">Next &rarr;</button>
+</div>
+</section>
+</main>
+
+<footer>
+<p>&copy; 2025 Synapse. All rights reserved.</p>
+</footer>
+</body>
+</html>

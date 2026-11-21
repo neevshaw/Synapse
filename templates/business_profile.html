@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Synapse - Business Profile</title>
+    <link rel="stylesheet" href="static/style.css">
+    <link rel="icon" href="static/fav.png" type="image/x-icon">
+    <style>
+        .flash-messages { margin-bottom: 20px; }
+        .flash-success { color: #155724; background: #d4edda; padding: 10px; border-radius: 4px; margin-bottom: 10px; }
+        .profile-form {
+            background-color: #1b263b;
+            padding: 2rem;
+            border-radius: 10px;
+            max-width: 600px;
+            margin: 2rem auto;
+            box-shadow: 0 6px 10px rgba(0,0,0,0.5);
+        }
+
+        .profile-form .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-form label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #778da9;
+        }
+
+        .profile-form input[type="text"],
+        .profile-form input[type="number"],
+        .profile-form select,
+        .profile-form textarea {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 0.7rem;
+            border: none;
+            border-radius: 5px;
+            background-color: #415a77;
+            color: #e0e1dd;
+            font-size: 1rem;
+            resize: vertical; /* allow resizing only up/down */
+        }
+
+        .profile-form textarea {
+            min-height: 120px; /* ensures it looks balanced */
+            line-height: 1.4;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .profile-form input::placeholder,
+        .profile-form textarea::placeholder {
+            color: #cdd2d9;
+        }
+
+        .profile-form input:focus,
+        .profile-form select:focus,
+        .profile-form textarea:focus {
+            outline: 2px solid #778da9;
+        }
+
+        .profile-form .btn {
+            display: inline-block;
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            background-color: #415a77;
+            color: #e0e1dd;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .profile-form .btn:hover {
+            background-color: #778da9;
+            color: #0d1b2a;
+        }
+
+        /* Align buttons: Save left, Logout right */
+        .form-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+        }
+
+        .logout-btn {
+            background-color: #ff4d4d !important;
+            color: #ffffff !important;
+        }
+
+        .logout-btn:hover {
+            background-color: #e60000 !important;
+            color: #ffffff !important;
+        }
+
+        .profile-form input::placeholder,
+        .profile-form textarea::placeholder {
+            color: #cdd2d9;
+            font-style: arial;
+            font-weight: arial;
+            font-size: 1rem;
+            font-family: Arial; /* force same font as inputs */
+        }
+
+
+    </style>
+</head>
+<body>
+    <header>
+        <img onclick="window.location.href='/learn'" style="cursor: pointer; width: 16rem" src="static/synapse.png">
+        <nav>
+            <a href="/projects">Projects</a>
+            <a href="/profile" class="active">Profile</a>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Business Profile</h2>
+        <div class="flash-messages">
+            {% for category, message in get_flashed_messages(with_categories=true) %}
+                <center><div class="flash-{{ category }}" style="width: 50%;">{{ message }}</div></center>
+            {% endfor %}
+        </div>
+        <form class="profile-form" method="post">
+            <div class="form-group">
+                <label for="name">Business Name</label>
+                <input type="text" id="name" name="name" placeholder="Enter your business name" value="{{ user.name }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="name">Business Type / Industry</label>
+                <input type="text" id="industry" name="industry" placeholder="e.g., Retail, Healthcare, Tech" {% if user.industry != None %}value="{{ user.industry }}"{% endif %} required>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" placeholder="Write a description of your business here">{% if user.description != None %}{{ user.description }}{% endif %}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="location">Business Location</label>
+                <input type="text" id="location" name="location" placeholder="City, State/Country" {% if user.location != None %}value="{{ user.location }}"{% endif %}>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="text" id="phone" name="phone" placeholder="Enter your phone number" {% if user.phone != None %}value="{{ user.phone }}"{% endif %} required>
+            </div>
+
+            <div class="form-buttons">
+                <input type="submit" class="btn" value="Save Profile">
+                <a href="/logout">
+                    <input type="button" class="btn logout-btn" value="Logout">
+                </a>
+            </div>
+        </form>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Synapse. All rights reserved.</p>
+    </footer>
+</body>
+</html>

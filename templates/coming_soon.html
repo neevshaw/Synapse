@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Synapse - Coming Soon</title>
+  <link rel="stylesheet" href="../../static/style.css">
+  <link rel="icon" href="../../static/fav.png" type="image/x-icon">
+  <style>
+    /* --- Reused palette from your example --- */
+    :root{
+      --bg:#0d1b2a;
+      --panel:#1b263b;
+      --muted:#778da9;
+      --text:#e0e1dd;
+      --accent:#415a77;
+    }
+
+
+    .coming-soon {
+      /* no card / transparent — only text centered */
+      display:flex;
+      flex-direction:column;
+      gap:1rem;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .coming-soon h1{
+      margin:0;
+      font-size: clamp(2.4rem, 6vw, 5.5rem); /* responsive large text */
+      letter-spacing: -0.02em;
+      line-height:1;
+      color: var(--text);
+      text-shadow:
+        0 6px 20px rgba(11,20,30,0.55),
+        0 1px 0 rgba(255,255,255,0.02);
+      -webkit-font-smoothing:antialiased;
+    }
+
+    .coming-soon p{
+      margin:0;
+      color:var(--muted);
+      font-size: clamp(0.95rem, 2.2vw, 1.15rem);
+      max-width: 48rem;
+    }
+
+
+
+  </style>
+</head>
+<body>
+    <header>
+        <img onclick="window.location.href='/learn'" style="cursor: pointer; width: 16rem" src="../../static/synapse.png">
+        <nav>
+            <a href="/learn">Learn</a>
+            <a href="/projects">Projects</a>
+            <a href="/profile">Profile</a>
+        </nav>
+    </header>
+
+  <main>
+    <div class="coming-soon" role="main" aria-labelledby="coming-soon-heading">
+      <h1 id="coming-soon-heading">Coming Soon</h1>
+      <p>We're building something special. Check back later to be the first to access new Synapse features and lessons.</p>
+      <div class="accent" aria-hidden="true"></div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Synapse. All rights reserved.</p>
+  </footer>
+</body>
+</html>

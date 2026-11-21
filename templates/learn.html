@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Synapse - Learn</title>
+  <link rel="stylesheet" href="static/style.css">
+  <link rel="icon" href="static/fav.png" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    .flash-messages { margin-bottom: 20px; }
+    .flash-success { color: #155724; background: #d4edda; padding: 10px; border-radius: 4px; margin-bottom: 10px; }
+
+    body {
+      margin: 0;
+      background-color: #0d1b2a;
+      color: #e0e1dd;
+      font-family: 'Segoe UI', sans-serif;
+      overflow-x: hidden;
+    }
+    main { padding: 2rem; text-align: center; }
+    h2 { margin-bottom: 0.5rem; }
+    p.intro { margin-bottom: 2rem; color: #cdd2d9; }
+
+    /* Neuron Map */
+    .neuron-map { position: relative; width: 100%; height: 80vh; }
+    svg { width: 100%; height: 100%; }
+    .neuron { cursor: pointer; fill: #415a77; stroke: #e0e1dd; stroke-width: 2; transition: fill 0.3s, r 0.3s; }
+    .neuron:hover { fill: #778da9; r: 75; }
+    line { stroke: #778da9; stroke-width: 2; opacity: 0.7; }
+
+    /* Tooltip Styling */
+    .tooltip {
+      position: absolute;
+      background-color: #1b263b;
+      color: #e0e1dd;
+      border: 1px solid #415a77;
+      padding: 1.5rem 2rem;
+      border-radius: 12px;
+      font-size: 14px;
+      max-width: 260px;
+      text-align: center;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s;
+      box-shadow: 0 0 20px rgba(119, 141, 169, 0.6);
+      z-index: 10;
+      line-height: 1.6;
+    }
+    .tooltip.show { opacity: 1; }
+    .tooltip .title { font-weight: bold; margin-bottom: 0.8rem; font-size: 16px; color: #78a0ff; }
+    .tooltip ul { padding-left: 0; margin: 0.5rem 0 0 0; list-style: none; }
+    .tooltip ul li { margin-bottom: 0.5rem; }
+
+    /* Icons inside neurons */
+    .neuron-icon {
+      pointer-events: auto;
+      width: 60px;
+      height: 60px;
+      cursor: pointer;
+      transition: transform 0.3s;
+      transform-origin: center;
+    }
+
+    /* Grow neuron and icon when hovering group */
+    .neuron-group:hover .neuron {
+      fill: #778da9;
+      r: 75;
+    }
+
+    /* Labels under neurons */
+    .neuron-label {
+      font-size: 13px;
+      fill: #ffffff;
+      font-weight: bold;
+      text-anchor: middle;
+      dominant-baseline: hanging;
+      pointer-events: none;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img onclick="window.location.href='/learn'" style="cursor: pointer; width: 16rem" src="static/synapse.png">
+    <nav>
+      <a href="/learn" class="active">Learn</a>
+      <a href="/projects">Projects</a>
+      <a href="/profile">Profile</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Explore Tech Courses</h2>
+    <p class="intro">Hover over a neuron to see its modules. Click on a neuron to begin learning!</p>
+    <div class="flash-messages">
+        {% for category, message in get_flashed_messages(with_categories=true) %}
+            <center><div class="flash-{{ category }}" style="width: 50%;">{{ message }}</div></center>
+        {% endfor %}
+    </div>
+    <div class="neuron-map">
+      <svg viewBox="0 0 1100 700" preserveAspectRatio="xMidYMid meet">
+        <!-- Connections -->
+        <line x1="150" y1="150" x2="350" y2="250"/>
+        <line x1="150" y1="400" x2="350" y2="250"/>
+        <line x1="350" y1="250" x2="550" y2="175"/>
+        <line x1="350" y1="250" x2="550" y2="375"/>
+        <line x1="550" y1="175" x2="750" y2="125"/>
+        <line x1="550" y1="175" x2="750" y2="300"/>
+        <line x1="550" y1="375" x2="750" y2="300"/>
+        <line x1="550" y1="375" x2="750" y2="450"/>
+        <line x1="750" y1="125" x2="950" y2="200"/>
+        <line x1="750" y1="300" x2="950" y2="200"/>
+        <line x1="750" y1="300" x2="950" y2="375"/>
+        <line x1="750" y1="450" x2="950" y2="375"/>
+
+        <!-- Neurons + Labels -->
+        <g class="neuron-group" data-unit="Unit 1">
+          <a href="/unit-1/lesson-1/module-1">
+            <circle class="neuron" cx="150" cy="150" r="65"/>
+            <image class="neuron-icon" href="https://img.icons8.com/ios-filled/100/ffffff/bot.png" x="120" y="120" width="60" height="60"/>
+            <text class="neuron-label" x="150" y="230">Unit 1: AI Basics</text>
+          </a>
+        </g>
+
+        <g class="neuron-group" data-unit="Unit 2" style="cursor: auto;">
+          <a>
+            <circle class="neuron" cx="150" cy="400" r="65"/>
+            <image class="neuron-icon" href="https://img.icons8.com/ios-filled/100/ffffff/flutter.png" x="120" y="370" width="60" height="60"/>
+            <text class="neuron-label" x="150" y="480">Unit 2: Flutter Apps</text>
+          </a>
+        </g>
+
+        <g class="neuron-group" data-unit="Unit 3" style="cursor: auto;">
+          <a>
+            <circle class="neuron" cx="350" cy="250" r="65"/>
+            <image class="neuron-icon" href="https://img.icons8.com/ios-filled/100/ffffff/python.png" x="320" y="220" width="60" height="60"/>
+            <text class="neuron-label" x="350" y="330">Unit 3: Data Analysis</text>
+          </a>
+        </g>
+
+        <g class="neuron-group" data-unit="Unit 4" style="cursor: auto;">
+          <a>
+            <circle class="neuron" cx="550" cy="175" r="65"/>
+            <image class="neuron-icon" href="https://img.icons8.com/ios-filled/100/ffffff/share-2.png" x="515" y="145" width="60" height="60"/>
+            <text class="neuron-label" x="550" y="255">Unit 4: Social Media</text>
+          </a>
+        </g>
+
+        <g class="neuron-group" data-unit="Unit 5" style="cursor: auto;">
+          <a>
+            <circle class="neuron" cx="550" cy="375" r="65"/>
+            <image class="neuron-icon" href="https://img.icons8.com/ios-filled/100/ffffff/api.png" x="520" y="345" width="60" height="60"/>
+            <text class="neuron-label" x="550" y="455">Unit 5: APIs</text>
+          </a>
+        </g>
+
+        <g class="neuron-group" data-unit="Unit 6" style="cursor: auto;">
+          <a>
+            <circle class="neuron" cx="750" cy="125" r="65"/>
+            <image class="neuron-icon" href="https://img.icons8.com/ios-filled/100/ffffff/html-5.png" x="720" y="95" width="60" height="60"/>
+            <text class="neuron-label" x="750" y="205">Unit 6: HTML, CSS & JS</text>
+          </a>
+        </g>
+
+        <g class="neuron-group" data-unit="Unit 7" style="cursor: auto;">
+          <a>
+            <circle class="neuron" cx="750" cy="300" r="65"/>
+            <image class="neuron-icon" href="https://img.icons8.com/ios-filled/100/ffffff/shopping-cart.png" x="720" y="270" width="60" height="60"/>
+            <text class="neuron-label" x="750" y="380">Unit 7: E-Commerce</text>
+          </a>
+        </g>
+
+        <g class="neuron-group" data-unit="Unit 8" style="cursor: auto;">
+          <a>
+            <circle class="neuron" cx="750" cy="475" r="65"/>
+            <image class="neuron-icon" href="https://img.icons8.com/ios-filled/100/ffffff/data-configuration.png" x="720" y="445" width="60" height="60"/>
+            <text class="neuron-label" x="750" y="555">Unit 8: Data Collection</text>
+          </a>
+        </g>
+
+        <g class="neuron-group" data-unit="Unit 9" style="cursor: auto;">
+          <a>
+            <circle class="neuron" cx="950" cy="200" r="65"/>
+            <image class="neuron-icon" href="https://img.icons8.com/ios-filled/100/ffffff/cloud.png" x="920" y="170" width="60" height="60"/>
+            <text class="neuron-label" x="950" y="280">Unit 9: Cloud Services</text>
+          </a>
+        </g>
+
+        <g class="neuron-group" data-unit="Unit 10" style="cursor: auto;">
+          <a>
+            <circle class="neuron" cx="950" cy="375" r="65"/>
+            <image class="neuron-icon" href="https://img.icons8.com/ios-filled/100/ffffff/robot-2.png" x="920" y="345" width="60" height="60"/>
+            <text class="neuron-label" x="950" y="455">Unit 10: Automation</text>
+          </a>
+        </g>
+      </svg>
+
+      <div id="tooltip" class="tooltip"></div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Synapse. All rights reserved.</p>
+  </footer>
+  <script>
+    const tooltip = document.getElementById('tooltip');
+    const neuronGroups = document.querySelectorAll('.neuron-group');
+
+    const modules = {
+      'Unit 1': { title: "Basic AI and Chatbot Development", items: ["What is AI?","Machine Learning Basics","Deep Learning vs ML"] },
+      'Unit 2': { title: "Mobile App Development for Beginners in Flutter", items: ["Setting Up Flutter","Building Your First App","Widgets and UI"] },
+      'Unit 3': { title: "Data Analysis with Excel and Python", items: ["Excel Data Tools","Using Pandas","Data Visualization"] },
+      'Unit 4': { title: "Social Media Automation Tools", items: ["Scheduling Posts","APIs for Automation","Building Simple Bots"] },
+      'Unit 5': { title: "Introduction to APIs and HTTP Requests", items: ["What is an API?","GET and POST Requests","API Authentication"] },
+      'Unit 6': { title: "Introduction to HTML, CSS, and JavaScript", items: ["HTML Basics","Styling with CSS","Intro to JavaScript"] },
+      'Unit 7': { title: "E-commerce and Online Shopping", items: ["Setting Up a Store","Payment Integration","Customer Analytics"] },
+      'Unit 8': { title: "Advanced Data Collection Techniques", items: ["Web Scraping","APIs for Data","Ethical Data Use"] },
+      'Unit 9': { title: "Introduction to Cloud Services (AWS/GCP)", items: ["What is the Cloud?","AWS Basics","GCP Overview"] },
+      'Unit 10': { title: "Workflow Automation in Repetitive Business Tasks", items:["Automating Emails","Spreadsheet Automation","Integrating Apps"] }
+    };
+
+    neuronGroups.forEach(group => {
+      const neuron = group.querySelector('.neuron');
+      const icon = group.querySelector('.neuron-icon');
+      const label = group.dataset.unit;
+
+      [neuron, icon].forEach(el => {
+        el.addEventListener('mouseenter', () => {
+          const rect = neuron.getBoundingClientRect();
+          const mapRect = document.querySelector('.neuron-map').getBoundingClientRect();
+          const data = modules[label];
+
+          tooltip.innerHTML = `<div class="title">${data.title}</div><ul>${data.items.map(i=>`<li>${i}</li>`).join('')}</ul>`;
+          tooltip.classList.add('show');
+
+          const tooltipRect = tooltip.getBoundingClientRect();
+          tooltip.style.left = (rect.left - mapRect.left + rect.width/2 - tooltipRect.width/2) + 'px';
+          tooltip.style.top = (rect.top - mapRect.top - tooltipRect.height - 10) + 'px';
+        });
+
+        el.addEventListener('mouseleave', () => {
+          tooltip.classList.remove('show');
+        });
+      });
+    });
+  </script>
+</body>
+</html>

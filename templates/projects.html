@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Synapse - Projects</title>
+  <link rel="stylesheet" href="static/style.css">
+  <link rel="icon" href="static/fav.png" type="image/x-icon">
+  <style>
+    .flash-messages { margin-bottom: 20px; }
+    .flash-success { color: #155724; background: #d4edda; padding: 10px; border-radius: 4px; margin-bottom: 10px; }
+
+    /* Floating Add Project Button */
+    .add-project-btn {
+      position: absolute;
+      right: 2rem;
+      top: 7rem;
+      padding: 0.8rem 1.2rem;
+      background-color: #415a77;
+      color: #e0e1dd;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      z-index: 1000;
+    }
+    .add-project-btn:hover {
+      background-color: #778da9;
+      color: #0d1b2a;
+    }
+
+    /* Popup Form Styles */
+    .popup-form {
+      opacity: 0;
+      overflow-y: auto;
+      pointer-events: none;
+      position: fixed;
+      max-height: 100%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.7);
+      background-color: #1b263b;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.6);
+      z-index: 2000;
+      width: 80%; /* Reduced width */
+      max-width: 500px;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    .popup-form.active {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(0.9);
+      pointer-events: auto;
+    }
+    .popup-form h3 {
+      margin-top: 0;
+      margin-bottom: 1rem;
+      color: #e0e1dd;
+      text-align: center;
+      font-size: 1.6rem;
+      letter-spacing: 0.5px;
+    }
+
+    .form-section {
+      background-color: #243b55;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .popup-form label {
+      display: block;
+      margin-bottom: 0.3rem;
+      color: #cdd2d9;
+      font-weight: 600;
+    }
+
+    .popup-form input:not([type="submit"]),
+    .popup-form textarea {
+      width: 95%; /* Reduced width */
+      padding: 0.6rem;
+      border: none;
+      border-radius: 6px;
+      background-color: #415a77;
+      color: #e0e1dd;
+      font-size: 1rem;
+      margin-bottom: 0.8rem;
+      font-family: inherit;
+      transition: background-color 0.2s ease;
+    }
+
+    .popup-form input:not([type="submit"])::placeholder,
+    .popup-form textarea::placeholder {
+      color: #cdd2d9;
+      font-weight: normal;
+    }
+
+    .popup-form input:not([type="submit"]):focus,
+    .popup-form textarea:focus {
+      background-color: #556b8a;
+      outline: none;
+    }
+
+    .form-buttons {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .form-buttons button, .form-buttons input, .btnn {
+      flex: 1;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+    }
+
+    .form-buttons .save-btn {
+      background-color: #415a77;
+      color: #e0e1dd;
+    }
+    .form-buttons .save-btn:hover {
+      background-color: #778da9;
+      color: #0d1b2a;
+    }
+
+    .cancel-btn {
+      background-color: #ff4d4d;
+      color: #fff;
+    }
+    .cancel-btn:hover {
+      background-color: #e60000;
+    }
+
+    /* Overlay */
+    .overlay {
+      opacity: 0;
+      pointer-events: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0,0,0,0.7);
+      z-index: 1500;
+      transition: opacity 0.3s ease;
+    }
+    .overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .projects {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .project-card {
+      background-color: #1b263b;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.4);
+      transition: transform 0.2s ease;
+    }
+
+    .project-card:hover {
+      transform: scale(1.03);
+    }
+
+    .project-card h3 {
+      color: #778da9;
+    }
+
+    .project-card a {
+      display: inline-block;
+      margin-top: 1rem;
+      color: #e0e1dd;
+      background-color: #415a77;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
+
+    .project-card a:hover {
+      background-color: #778da9;
+      color: #0d1b2a;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 0.7rem 1.5rem;
+        border: none;
+        min-width: 100px;
+        border-top-right-radius: 50px;
+        border-bottom-right-radius: 50px;
+        border-top-left-radius: 50px;
+        border-bottom-left-radius: 50px;
+        background-color: #415a77;
+        color: #e0e1dd;
+        font-weight: bold;
+        cursor: pointer;
+        font-size:16px;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+        background-color: #778da9;
+        color: #0d1b2a;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img onclick="window.location.href='/learn'" style="cursor: pointer; width: 16rem" src="static/synapse.png">
+    <nav>
+      {% if account == "personal" %}
+        <a href="/learn">Learn</a>
+      {% endif %}
+      <a href="/projects" class="active">Projects</a>
+      <!--<a href="/mentors">Mentors</a>
+      <a href="/students">Students</a>-->
+      <a href="/profile">Profile</a>
+    </nav>
+  </header>
+
+  <main>
+    {% if account == "personal" %}
+    <h2>Student Project Opportunities</h2>
+    <p class="intro">Explore real-world projects from small businesses. Apply your AI knowledge to solve real problems.</p>
+    {% endif %}
+    {% if account != "personal" %}
+    <h2>Your Projects</h2>
+    <p class="intro">Explore your projects and find capable students to help!</p>
+    {% endif %}
+
+    {% if account != "personal" %}
+    <button class="add-project-btn" onclick="openForm()">+ Add Project</button>
+    {% endif %}
+    <div class="flash-messages">
+        {% for category, message in get_flashed_messages(with_categories=true) %}
+            <center><div class="flash-{{ category }}" style="width: 50%;">{{ message }}</div></center>
+        {% endfor %}
+    </div>
+    <div class="projects">
+      {% for project in projects %}
+          {% if account != "personal" and project.business_id == uid %}
+          <div class="project-card" onclick="window.location.href='/project/{{ project.id }}'" style="cursor: pointer;">
+            <h3>{{ project.title }}</h3>
+            <p>{{ project.short_description }}</p>
+            <a href="/project/{{ project.id }}">View Details</a>
+          </div>
+          {% endif %}
+          {% if account == "personal" and project.fulfilled == False %}
+          <div class="project-card" onclick="window.location.href='/project/{{ project.id }}'" style="cursor: pointer;">
+            <h3>{{ project.title }}</h3>
+            <p>{{ project.short_description }}</p>
+            <a href="/project/{{ project.id }}">View Details</a>
+          </div>
+          {% endif %}
+      {% endfor %}
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Synapse. All rights reserved.</p>
+  </footer>
+
+  <div class="overlay" id="overlay" onclick="closeForm()"></div>
+
+  <div class="popup-form" id="popupForm">
+    <h3>Add a New Project</h3>
+    <form action="/post" method="post">
+
+        <label for="title">Project Title</label>
+        <input type="text" id="title" name="title" placeholder="Enter project title" required>
+
+        <label for="description">Short Project Description</label>
+        <textarea id="description" name="description" rows="3" placeholder="Describe the project in 1-2 sentences." required></textarea>
+
+
+        <label for="deadline">Project Deadline</label>
+        <input type="date" id="deadline" name="deadline">
+
+
+        <label for="expected-outcome">Detailed Project Description</label>
+        <textarea id="expected-outcome" name="expected-outcome" rows="6" placeholder="Please describe in as much detail as possible what your project will entail." required></textarea>
+
+        <label for="additional-info">Additional Information</label>
+        <textarea id="additional-info" name="additional-info" rows="3" placeholder="Any other important details..."></textarea>
+
+        <button type="button" id="AI" class="btnn cancel-btn">Get AI Suggestions</button>
+        <p style="white-space: pre;" id="suggestions"></p>
+        <script>
+        var aibtn = document.getElementById('AI')
+        aibtn.addEventListener('click', async () => {
+            aibtn.innerHTML = "Loading...";
+            aibtn.disabled = true;
+            const dataToSend = {
+                title: document.getElementById('title').innerHTML,
+                short_description: document.getElementById('description').innerHTML,
+                long_description: document.getElementById('expected-outcome').innerHTML,
+                additional_info: document.getElementById('additional-info').innerHTML
+            };
+
+            try {
+                const response = await fetch('/match', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dataToSend)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const responseData = await response.json();
+                console.log('Success:', responseData);
+                document.getElementById('suggestions').textContent = responseData.output;
+                aibtn.disabled = false;
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error sending POST request. Check console for details.');
+                aibtn.disabled = false;
+            }
+            aibtn.innerHTML = "Get AI Suggestions"
+        });
+    </script>
+
+      <div class="form-buttons">
+        <input type="submit" class="save-btn" value="Post (not needed if using AI)">
+        <button type="button" class="cancel-btn" onclick="closeForm()">Cancel</button>
+      </div>
+    </form>
+  </div>
+  {% if account_type != "personal" %}
+  <script>
+    function openForm() {
+      document.getElementById("popupForm").classList.add("active");
+      document.getElementById("overlay").classList.add("active");
+      document.querySelector("body").style.overflow = "hidden";
+    }
+    function closeForm() {
+      document.getElementById("popupForm").classList.remove("active");
+      document.getElementById("overlay").classList.remove("active");
+      document.querySelector("body").style.overflow = "auto";
+      document.getElementById("suggestions").textContent = "";
+    }
+  </script>
+  {% endif %}
+</body>
+</html>

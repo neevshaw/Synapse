@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Synapse - Home</title>
+  <link rel="stylesheet" href="static/style.css">
+  <link rel="icon" href="static/fav.png" type="image/x-icon">
+  <style>
+    .flash-messages { margin-bottom: 20px; }
+    .flash-error { color: #dc3545; background: #f8d7da; padding: 10px; border-radius: 4px; margin-bottom: 10px; }
+    .flash-success { color: #155724; background: #d4edda; padding: 10px; border-radius: 4px; margin-bottom: 10px; }
+
+    .home-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 70vh;
+      text-align: center;
+    }
+
+    .hero {
+      max-width: 700px;
+      background-color: #1b263b;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.5);
+    }
+
+    .hero h2 {
+      color: #e0e1dd;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      color: #778da9;
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+    }
+
+    .hero-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .btn {
+      background-color: #415a77;
+      color: #e0e1dd;
+      padding: 0.7rem 1.5rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .btn:hover {
+      background-color: #778da9;
+      color: #0d1b2a;
+      transform: translateY(-2px);
+    }
+
+    .btn-alt {
+      background-color: #778da9;
+      color: #0d1b2a;
+    }
+
+    .btn-alt:hover {
+      background-color: #415a77;
+      color: #e0e1dd;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img onclick="window.location.href='/learn'" style="cursor: pointer; width: 16rem" src="static/synapse.png">
+    <nav>
+      <a href="/" class="active">Home</a>
+      <a href="/login">Login</a>
+      <a href="/signup">Sign Up</a>
+    </nav>
+  </header>
+
+  <main class="home-container">
+    <div class="hero">
+      <h2>Welcome to Synapse</h2>
+      <div class="flash-messages">
+        {% for category, message in get_flashed_messages(with_categories=true) %}
+            <div class="flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+        </div>
+      <p>Synapse connects small businesses with skilled students who turn learning into real solutions. From websites to automation and AI tools, students apply what they learn while helping businesses grow.</p>
+      <div class="hero-buttons">
+        <a href="/login" class="btn">Login</a>
+        <a href="/signup" class="btn">Sign Up</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Synapse. All rights reserved.</p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Details</title>
+  <link rel="icon" href="/static/fav.png" type="image/x-icon">
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    .flash-messages { margin-bottom: 20px; }
+    .flash-success { color: #155724; background: #d4edda; padding: 10px; border-radius: 4px; margin-bottom: 10px; }
+
+    /* Popup Form Styles */
+    .popup-form {
+      opacity: 0;
+      overflow-y: auto;
+      pointer-events: none;
+      position: fixed;
+      max-height: 100%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.7);
+      background-color: #1b263b;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.6);
+      z-index: 2000;
+      width: 80%; /* Reduced width */
+      max-width: 500px;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    .popup-form.active {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(0.9);
+      pointer-events: auto;
+    }
+    .popup-form h3 {
+      margin-top: 0;
+      margin-bottom: 1rem;
+      color: #e0e1dd;
+      text-align: center;
+      font-size: 1.6rem;
+      letter-spacing: 0.5px;
+    }
+
+    .form-section {
+      background-color: #243b55;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .popup-form label {
+      display: block;
+      margin-bottom: 0.3rem;
+      color: #cdd2d9;
+      font-weight: 600;
+    }
+
+    .popup-form input:not([type="submit"]),
+    .popup-form textarea {
+      width: 95%; /* Reduced width */
+      padding: 0.6rem;
+      border: none;
+      border-radius: 6px;
+      background-color: #415a77;
+      color: #e0e1dd;
+      font-size: 1rem;
+      margin-bottom: 0.8rem;
+      font-family: inherit;
+      transition: background-color 0.2s ease;
+    }
+
+    .popup-form input:not([type="submit"])::placeholder,
+    .popup-form textarea::placeholder {
+      color: #cdd2d9;
+      font-weight: normal;
+    }
+
+    .popup-form input:not([type="submit"]):focus,
+    .popup-form textarea:focus {
+      background-color: #556b8a;
+      outline: none;
+    }
+
+    .form-buttons {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .form-buttons button, .form-buttons input {
+      flex: 1;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+    }
+
+    .form-buttons .save-btn {
+      background-color: #415a77;
+      color: #e0e1dd;
+    }
+    .form-buttons .save-btn:hover {
+      background-color: #778da9;
+      color: #0d1b2a;
+    }
+
+    .form-buttons .cancel-btn {
+      background-color: #ff4d4d;
+      color: #fff;
+    }
+    .form-buttons .cancel-btn:hover {
+      background-color: #e60000;
+    }
+
+    /* Overlay */
+    .overlay {
+      opacity: 0;
+      pointer-events: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0,0,0,0.7);
+      z-index: 1500;
+      transition: opacity 0.3s ease;
+    }
+    .overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .section {
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #415a77;
+    }
+
+    .section:last-child {
+      border-bottom: none;
+    }
+
+    .section h2 {
+      margin-bottom: 0.5rem;
+      font-size: 1.3rem;
+      color: #f0f3f7;
+    }
+
+    .section p {
+      margin: 0.2rem 0;
+      line-height: 1.5;
+    }
+
+    .label {
+      font-weight: bold;
+      color: #cdd2d9;
+    }
+
+    /* Button Styles */
+    .btn {
+      background-color: #415a77;
+      color: #f0f3f7;
+      border: none;
+      padding: 0.7rem 1.5rem;
+      margin: 0.5rem;
+      font-size: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #778da9;
+    }
+
+    .btn.secondary {
+      background-color: #1b263b;
+      border: 2px solid #415a77;
+      color: #cdd2d9;
+    }
+
+    .btn.secondary:hover {
+      background-color: #415a77;
+      color: #f0f3f7;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img onclick="window.location.href='/learn'" style="cursor: pointer; width: 16rem" src="/static/synapse.png">
+    <nav>
+      {% if account == "personal" %}
+        <a href="/learn">Learn</a>
+      {% endif %}
+      <a href="/projects">Projects</a>
+      <!--<a href="students.html">Students</a>
+      <a href="mentors.html">Mentors</a>-->
+      <a href="/profile">Profile</a>
+    </nav>
+  </header>
+
+  <main style="margin: 2rem auto; width: 800px; max-width: 100%; background-color: #1b263b; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); padding: 2rem;">
+    <!-- Project Info Section -->
+    <div class="section">
+      <h2>Project Information</h2>
+      <p><span class="label">Title:</span> {{ p.title }}</p>
+      <p><span class="label">Short Description:</span> {{ p.short_description }}</p>
+      <p><span class="label">Deadline:</span> {{ p.deadline }}</p>
+    </div>
+
+    <!-- Business Info Section -->
+    <div class="section">
+      <h2>Business Information</h2>
+      <p><span class="label">Business Name:</span> {{ b.name }}</p>
+      <p><span class="label">Business Type / Industry:</span> {{ b.industry }}</p>
+      <p><span class="label">Description:</span> {{ b.description }}</p>
+      <p><span class="label">Location:</span> {{ b.location }}</p>
+      <p><span class="label">Contact Email:</span> {{ e }}</p>
+      <p><span class="label">Contact Phone:</span> {{ b.phone }}</p>
+    </div>
+
+    <!-- Detailed Description Section -->
+    <div class="section">
+      <h2>Detailed Project Description</h2>
+      <p>
+        {{ p.long_description }}
+      </p>
+    </div>
+
+    <!-- Additional Info Section -->
+    <div class="section">
+      <h2>Additional Information</h2>
+      <p>{% if p.additional_info != None %}{{ p.additional_info }}{% endif %}</p>
+    </div>
+
+    <!-- Buttons Section -->
+    <div class="section" style="text-align: center; border-bottom: none;">
+      <button class="btn" onclick="window.location.href='/projects'">Back</button>
+      {% if account == "personal" %}
+      <button class="btn" onclick="openForm()">Apply</button>
+      {% endif %}
+      {% if account != "personal" %}
+      <form action="/complete/{{ p.id }}" method="post">
+        <button type="submit" class="btn">Mark Project Completed</button>
+      </form>
+      {% endif %}
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Synapse. All rights reserved.</p>
+  </footer>
+  <div class="overlay" id="overlay" onclick="closeForm()"></div>
+
+  <div class="popup-form" id="popupForm">
+    <h3>Add a New Project</h3>
+    <form action="/apply/{{ p.id }}" method="post">
+
+        <label for="application">Write a few paragraphs abotut why you think you are a good fit for this project:</label>
+        <textarea id="application" name="application" rows="6" placeholder="Amaze us!" required></textarea>
+
+        <label for="additional-info">Additional Information</label>
+        <textarea id="additional-info" name="additional-info" rows="3" placeholder="Any other important details..."></textarea>
+
+      <div class="form-buttons">
+        <input type="submit" class="save-btn" value="Submit">
+        <button type="button" class="cancel-btn" onclick="closeForm()">Cancel</button>
+      </div>
+    </form>
+  </div>
+  <script>
+    function openForm() {
+      document.getElementById("popupForm").classList.add("active");
+      document.getElementById("overlay").classList.add("active");
+      document.querySelector("body").style.overflow = "hidden";
+    }
+    function closeForm() {
+      document.getElementById("popupForm").classList.remove("active");
+      document.getElementById("overlay").classList.remove("active");
+      document.querySelector("body").style.overflow = "auto";
+    }
+  </script>
+</body>
+</html>

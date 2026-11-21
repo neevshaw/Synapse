@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Synapse - AI Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="icon" href="/static/fav.png" type="image/x-icon">
+<style>
+ body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #0d1b2a;
+    color: #e0e1dd;
+}
+
+header {
+  background-color: #1b263b;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header h1 {
+  margin: 0;
+  color: #e0e1dd;
+}
+
+nav a {
+  color: #778da9;
+  margin-left: 1rem;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+nav a:hover, nav a.active {
+  color: #e0e1dd;
+}
+
+main {
+    display: flex;
+    min-height: 85vh;
+}
+
+/* Sidebar updated to match lesson pages */
+.sidebar {
+    background-color: #1c283d;
+    width: 250px;
+    padding: 1.5rem;
+    border-right: 2px solid #415a77;
+}
+
+.sidebar h3 {
+    border-bottom: 2px solid #415a77;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.sidebar a {
+    display: block;
+    color: #cdd2d9;
+    text-decoration: none;
+    margin: 0.5rem 0;
+    transition: color 0.3s;
+}
+
+.sidebar a:hover {
+    color: #778da9;
+}
+
+.lessons {
+    display: none;
+    margin-left: 1rem;
+}
+
+.module-btn {
+    background: none;
+    border: none;
+    color: #e0e1dd;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0.3rem 0;
+    margin-bottom: 0.3rem;
+    text-align: left;
+    width: 100%;
+    transition: color 0.3s;
+}
+
+.module-btn:hover {
+    color: #778da9;
+}
+
+.active-module .lessons {
+    display: block;
+}
+
+/* Quiz content */
+.quiz-content {
+    flex: 1;
+    padding: 2rem 3rem;
+}
+
+.quiz-content h2 {
+    border-bottom: 2px solid #415a77;
+    padding-bottom: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+.question {
+    margin-bottom: 1.8rem;
+    background-color: #1c283d;
+    padding: 1.2rem;
+    border-radius: 10px;
+    border: 1px solid #415a77;
+}
+
+.question h4 {
+    margin-bottom: 1rem;
+    color: #e0e1dd;
+}
+
+.options label {
+    display: block;
+    margin: 0.5rem 0;
+    cursor: pointer;
+    color: #cdd2d9;
+}
+
+.quiz-btn {
+    background-color: #415a77;
+    color: #e0e1dd;
+    border: none;
+    padding: 0.9rem 2rem;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.quiz-btn:hover {
+    background-color: #778da9;
+    color: #0d1b2a;
+}
+
+.result {
+    margin-top: 2rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+/* Lesson-like styles for content consistency */
+.lesson-content {
+    flex: 1;
+    padding: 2rem 3rem;
+}
+
+.lesson-content h2 {
+    border-bottom: 2px solid #415a77;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.highlight {
+    background-color: #415a77;
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1.5rem 0;
+}
+
+.quote {
+    border-left: 4px solid #778da9;
+    padding-left: 1rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+    color: #cdd2d9;
+}
+
+.callout {
+    background-color: #556b8a;
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1.5rem 0;
+    color: #e0e1dd;
+    font-weight: bold;
+}
+
+.lesson-nav {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+}
+
+.lesson-nav button {
+    background-color: #415a77;
+    color: #e0e1dd;
+    border: none;
+    padding: 0.8rem 1.6rem;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.lesson-nav button:hover {
+    background-color: #778da9;
+    color: #0d1b2a;
+}
+
+img.lesson-img {
+    width: 50%;
+    border-radius: 8px;
+    margin: 1rem 0;
+}
+
+ul {
+    margin: 0.5rem 0 1rem 1.2rem;
+}
+
+footer {background-color:#1b263b;text-align:center;padding:1rem;}
+footer p {margin-top: 1em; margin-bottom: 1em; line-height: normal;}
+
+</style>
+<script>
+function toggleModule(el){el.parentElement.classList.toggle('active-module');}
+</script>
+</head>
+<body>
+<header>
+  <img onclick="window.location.href='/learn'" style="cursor: pointer; width: 16rem" src="/static/synapse.png">
+  <nav>
+    <a href="/learn">Learn</a>
+    <a href="/projects">Projects</a>
+    <a href="/profile">Profile</a>
+  </nav>
+</header>
+
+<main>
+<aside class="sidebar">
+<h3>Lesson Modules</h3>
+<div class="module">
+  <button class="module-btn" onclick="toggleModule(this)">What is AI?</button>
+  <div class="lessons">
+    <a href="lesson1-1.html">1. Introduction</a>
+    <a href="lesson1-2.html">2. History of AI</a>
+    <a href="lesson1-3.html">3. Applications</a>
+  </div>
+</div>
+<div class="module">
+  <button class="module-btn" onclick="toggleModule(this)">Machine Learning Basics</button>
+  <div class="lessons">
+    <a href="lesson2-1.html">1. What is ML?</a>
+    <a href="lesson2-2.html">2. Supervised vs Unsupervised</a>
+    <a href="lesson2-3.html">3. Algorithms</a>
+  </div>
+</div>
+<div class="module">
+  <button class="module-btn" onclick="toggleModule(this)">Deep Learning vs ML</button>
+  <div class="lessons">
+    <a href="lesson3-1.html">1. Intro to Deep Learning</a>
+    <a href="lesson3-2.html">2. Neural Networks</a>
+    <a href="lesson3-3.html">3. DL vs ML</a>
+  </div>
+</div>
+<div class="module">
+  <button class="module-btn" onclick="toggleModule(this)">Ethics in AI</button>
+  <div class="lessons">
+    <a href="lesson4-1.html">1. Overview</a>
+    <a href="lesson4-2.html">2. Bias & Fairness</a>
+    <a href="lesson4-3.html">3. Responsibility</a>
+  </div>
+</div>
+<div class="module active-module">
+  <button class="module-btn" onclick="toggleModule(this)">Final Quiz</button>
+  <div class="lessons">
+    <a href="quiz.html" class = "active">Take Quiz</a>
+  </div>
+</div>
+</aside>
+
+  <section class="quiz-content">
+    <h2>Final Quiz: Test Your AI Knowledge</h2>
+
+    <form id="quizForm">
+      <!-- 10 Questions -->
+      <div class="question">
+        <h4>1. What does AI stand for?</h4>
+        <div class="options">
+          <label><input type="radio" name="q1" value="A"> Artificial Intelligence</label>
+          <label><input type="radio" name="q1" value="B"> Automated Interaction</label>
+          <label><input type="radio" name="q1" value="C"> Augmented Input</label>
+          <label><input type="radio" name="q1" value="D"> Adaptive Interface</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <h4>2. Which of the following is an example of AI in daily life?</h4>
+        <div class="options">
+          <label><input type="radio" name="q2" value="A"> Light switch</label>
+          <label><input type="radio" name="q2" value="B"> Netflix recommendations</label>
+          <label><input type="radio" name="q2" value="C"> Bicycle gear system</label>
+          <label><input type="radio" name="q2" value="D"> Electric fan</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <h4>3. Machine Learning allows systems to:</h4>
+        <div class="options">
+          <label><input type="radio" name="q3" value="A"> Follow hardcoded rules only</label>
+          <label><input type="radio" name="q3" value="B"> Learn from data and improve</label>
+          <label><input type="radio" name="q3" value="C"> Work without any data</label>
+          <label><input type="radio" name="q3" value="D"> Operate like a web server</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <h4>4. Deep Learning primarily uses:</h4>
+        <div class="options">
+          <label><input type="radio" name="q4" value="A"> Linear regression</label>
+          <label><input type="radio" name="q4" value="B"> Decision trees</label>
+          <label><input type="radio" name="q4" value="C"> Neural networks</label>
+          <label><input type="radio" name="q4" value="D"> Databases</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <h4>5. Which of these is an ethical concern in AI?</h4>
+        <div class="options">
+          <label><input type="radio" name="q5" value="A"> Bias and fairness</label>
+          <label><input type="radio" name="q5" value="B"> Processing speed</label>
+          <label><input type="radio" name="q5" value="C"> Data storage</label>
+          <label><input type="radio" name="q5" value="D"> Hardware design</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <h4>6. Supervised learning requires:</h4>
+        <div class="options">
+          <label><input type="radio" name="q6" value="A"> Labeled data</label>
+          <label><input type="radio" name="q6" value="B"> Unlabeled data</label>
+          <label><input type="radio" name="q6" value="C"> Reinforcement signals</label>
+          <label><input type="radio" name="q6" value="D"> None of the above</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <h4>7. Which AI technique is commonly used for image recognition?</h4>
+        <div class="options">
+          <label><input type="radio" name="q7" value="A"> Decision Trees</label>
+          <label><input type="radio" name="q7" value="B"> Neural Networks</label>
+          <label><input type="radio" name="q7" value="C"> Linear Regression</label>
+          <label><input type="radio" name="q7" value="D"> K-Means Clustering</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <h4>8. Unsupervised learning is useful for:</h4>
+        <div class="options">
+          <label><input type="radio" name="q8" value="A"> Classification with labels</label>
+          <label><input type="radio" name="q8" value="B"> Discovering patterns in data</label>
+          <label><input type="radio" name="q8" value="C"> Rule-based automation</label>
+          <label><input type="radio" name="q8" value="D"> Web development</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <h4>9. Reinforcement learning is driven by:</h4>
+        <div class="options">
+          <label><input type="radio" name="q9" value="A"> Predefined rules</label>
+          <label><input type="radio" name="q9" value="B"> Labeled datasets</label>
+          <label><input type="radio" name="q9" value="C"> Rewards and penalties</label>
+          <label><input type="radio" name="q9" value="D"> Random guessing</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <h4>10. What is the main difference between Narrow AI and General AI?</h4>
+        <div class="options">
+          <label><input type="radio" name="q10" value="A"> Narrow AI can do everything humans do</label>
+          <label><input type="radio" name="q10" value="B"> Narrow AI is specialized; General AI is theoretical</label>
+          <label><input type="radio" name="q10" value="C"> General AI only performs calculations</label>
+          <label><input type="radio" name="q10" value="D"> No difference exists</label>
+        </div>
+      </div>
+
+      <button type="button" class="quiz-btn" onclick="submitQuiz()">Submit Quiz</button>
+    </form>
+
+    <div id="result" class="result"></div>
+  </section>
+</main>
+
+<footer>
+  <p>&copy; 2025 Synapse. All rights reserved.</p>
+</footer>
+
+<script>
+function submitQuiz() {
+  const correctAnswers = {
+    q1:"A", q2:"B", q3:"B", q4:"C", q5:"A",
+    q6:"A", q7:"B", q8:"B", q9:"C", q10:"B"
+  };
+
+  let score = 0;
+  const total = Object.keys(correctAnswers).length;
+
+  for (let q in correctAnswers) {
+    const answer = document.querySelector(`input[name="${q}"]:checked`);
+    if (answer && answer.value === correctAnswers[q]) score++;
+  }
+
+  const resultDiv = document.getElementById("result");
+  const percentage = (score / total) * 100;
+  let message = "";
+
+  if (percentage === 100) message = "Perfect score 🎉! You’re an AI expert!";
+  else if (percentage >= 90) message = "Great job! You understand most AI basics.";
+  else if (percentage >= 60) message = "Not bad! Review a few lessons and try again.";
+  else message = "Keep studying — you’ll get there!";
+
+  resultDiv.innerHTML = `<p>Your Score: ${score}/${total} (${percentage}%)</p><p>${message}</p>`;
+
+}
+
+</script>
+</body>
+</html>

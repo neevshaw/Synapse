@@ -1,9 +1,8 @@
-# flask_app.py
 import os
 from urllib.parse import quote_plus
 from dotenv import load_dotenv
 import requests
-from flask import Flask, render_template, request, redirect, url_for, flash, render_template_string, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, render_template_string, jsonify, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -11,42 +10,33 @@ import json
 import random
 
 
-# Load environment variables
-project_folder = os.path.expanduser('~/mysite')  # adjust as needed
+project_folder = os.path.expanduser('~/mysite')  # PythonAnywhere project folder containing .env
 load_dotenv(os.path.join(project_folder, '.env'))
 LAMBDA_FUNCTION_URL = os.getenv('LAMBDA')
-# Initialize extensions
+
 db = SQLAlchemy()
 login_manager = LoginManager()
 
 app = Flask(__name__)
 
-# Configuration
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
-# Build DB URI from environment variables (already provided - will not error out)
 db_user = os.getenv('DB_USER')
 db_pass = os.getenv('DB_PASS')
 db_host = os.getenv('DB_HOST')
 db_name = os.getenv('DB_NAME')
-
-# Safely encode password for URL
 db_pass_encoded = quote_plus(db_pass)
-
-# Database configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = (
     f"mysql+pymysql://{db_user}:{db_pass_encoded}@{db_host}:3306/{db_name}"
 )
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 280}
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Initialize extensions with app
 db.init_app(app)
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 login_manager.login_message = 'Please log in to access this page.'
 
-# User model
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -100,16 +90,12 @@ class Project(db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# Initialize database tables
 def init_db():
-    """Initialize database tables if they don't exist"""
     try:
         with app.app_context():
-            # Try to query the users table to see if it exists
             result = db.session.execute(db.text('SELECT 1 FROM users LIMIT 1'))
             result.close()
     except Exception:
-        # Tables don't exist, create them
         try:
             with app.app_context():
                 db.create_all()
@@ -119,21 +105,16 @@ def init_db():
             app.logger.error(f"Error creating database tables: {e}")
             print(f"Error creating database tables: {e}")
 
-# Force database initialization
 def ensure_db_exists():
-    """Ensure database tables exist, create if they don't"""
     with app.app_context():
         try:
-            # Always try to create tables (will not recreate existing ones)
-            db.create_all()
+            db.create_all()  # only creates tables that don't exist yet
             print("Database initialization complete!")
         except Exception as e:
             print(f"Error with database initialization: {e}")
 
-# Initialize database when app starts
 ensure_db_exists()
 
-# Routes
 @app.route('/')
 def index():
     if current_user.is_authenticated:
@@ -155,7 +136,7 @@ def register():
 
         if User.query.filter_by(email=email).first():
             flash('Email already registered. Please use a different email.', 'error')
-            return render_template("signup.html", name=full_name, password=password, confrim_password=confirm_password, account=account_type)
+            return render_template("signup.html", name=full_name, password=password, confirm_password=confirm_password, account=account_type)
 
         if len(password) < 6:
             flash('Password must be at least 6 characters long.', 'error')
@@ -166,7 +147,6 @@ def register():
             return render_template("signup.html", name=full_name, email=email, account=account_type)
 
         try:
-            # Create new user
             user = User(email=email, account_type=account_type, name=full_name)
             user.set_password(password)
             db.session.add(user)
@@ -212,7 +192,6 @@ def login():
 
         login_user(user, remember=remember_me)
 
-        # Redirect to next page if specified, otherwise dashboard
         next_page = request.args.get('next')
         if next_page and next_page.startswith('/'):
             return redirect(next_page)
@@ -244,7 +223,7 @@ def matching():
             "Launching Online Stores",
             "Collecting Data Autonomously",
             "Running Projects in the Cloud",
-            "Saving Time on Repetitve Tasks",
+            "Saving Time on Repetitive Tasks",
         ]
         for i in range(len(inter)):
             if student.interests != None and student.interests[i] == "1":
@@ -323,11 +302,9 @@ def profile():
             student.age = int(request.form.get("age")) if request.form.get("age") != '' else None
             student.grade = request.form.get("grade")
             student.location = request.form.get("location")
-            all_options = list(range(1, 13))  # 1 to 20
+            all_options = list(range(1, 13))
             checked = request.form.getlist('interests')
             checked = [int(x) for x in checked]
-
-            # Create a list of True/False for each option
             checkbox_states = [str(int(i in checked)) for i in all_options]
             student.interests = "".join(checkbox_states)
             student.courses = "".join(checkbox_states)
@@ -374,7 +351,7 @@ def post():
 def project_details(project_id):
     p = Project.query.get(project_id)
     if p == None:
-        redirect(url_for('not_found'))
+        abort(404)
     business = Business.query.get(p.business_id)
     email = User.query.get(p.business_id).email
     return render_template('project_template.html', p=p, b=business, e=email, account=current_user.account_type)
@@ -393,7 +370,7 @@ def apply(project_id):
 
     payload = {
         "to": User.query.get(project.business_id).email,
-        "subject": "Application Recieved for Project: " + project.title,
+        "subject": "Application Received for Project: " + project.title,
         "body": "Application:\n\n" + body + "\n\n"+ (add+"\n\n" if add !=None else "") + f"Student Info:\n\nName - {student.name}\nEmail - {current_user.email}"
     }
     res = requests.post(
@@ -412,7 +389,6 @@ def logout():
     flash('You have been logged out successfully.', 'success')
     return redirect(url_for('index'))
 
-# Error handlers
 @app.errorhandler(404)
 def not_found(error):
     return render_template_string('''
@@ -442,14 +418,12 @@ def internal_error(error):
     </html>
     '''), 500
 
-# Expose db and User for CLI/shell usage
 app.db = db
 app.User = User
 
-# CLI command to initialize database (alternative method)
 @app.cli.command()
 def init_db_command():
-    """Clear existing data and create new tables."""
+    """Create any missing database tables."""
     with app.app_context():
         db.create_all()
         print('Initialized the database.')

@@ -1,15 +1,14 @@
-# send_email_simple.py
+# AWS Lambda that sends application emails for the Flask app (POSTed to via the LAMBDA env var)
 import os
 import smtplib
 from email.message import EmailMessage
 
-SMTP_HOST = "smtp.gmail.com"   # change to your provider
-SMTP_PORT = 465                # 465 for SMTP_SSL, 587 for STARTTLS
+SMTP_HOST = "smtp.gmail.com"
+SMTP_PORT = 465  # 465 for SMTP_SSL, 587 for STARTTLS
 USERNAME = os.getenv("username")
 PASSWORD = os.getenv("password")
 
 def lambda_handler(event, context):
-    # --- Email details ---
     recipient = event.get("to")
     subject = event.get("subject")
     body = event.get("body")
@@ -21,7 +20,6 @@ def lambda_handler(event, context):
     msg.set_content(body)
 
     try:
-        # Send the email using SSL
         with smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT) as smtp:
             smtp.login(USERNAME, PASSWORD)
             smtp.send_message(msg)
